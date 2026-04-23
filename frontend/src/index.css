@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+  /* This defines your CineFinder colors globally */
+  --color-brand: #f5c518;
+  --color-dark: #1f242d;
+}
+
+/* Optional: Smooth scrolling for the whole app */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-dark);
+  color: white;
+}
