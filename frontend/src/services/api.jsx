@@ -13,3 +13,14 @@ export const getTrending = async () => {
         return [];
     }
 };
+
+
+  export const searchMovies = async (query) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${query}`);
+        return response.data.results; // TMDb returns the array in a .results property
+    } catch (error) {
+        console.error("Error searching movies:", error);
+        return [];
+    }
+};
