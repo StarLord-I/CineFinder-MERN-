@@ -14,6 +14,7 @@ export const getTrending = async () => {
     }
 };
 
+// function to search movies by query
 
   export const searchMovies = async (query) => {
     try {
@@ -24,3 +25,27 @@ export const getTrending = async () => {
         return [];
     }
 };
+
+// function to get movie details by ID
+
+  export const getMovieDetails = async (id) => {
+     try {
+        const response = await axios.get(`${BASE_URL}/movie/${id}?api_key=${API_KEY}`);
+        return response.data; // TMDb returns the movie details as an object
+     } catch(error){
+        console.error("Error fetching movie details:", error);
+        return null;
+      }
+     
+  };
+
+  export const getMovieCredits = async (id) =>{
+     try {
+        const response = await axios.get(`${BASE_URL}/movie/${id}/credits?api_key=${API_KEY}`);
+        return response.data; // TMDb returns the movie details as an object
+     }
+      catch(error){
+        console.error("Error fetching movie credits:", error);
+        return {cast:[], crew:[]};
+      }
+  }

@@ -77,6 +77,7 @@ const SearchResults = () => {
                     {movies.map((movie) => (
                         <MovieCard 
                             key={movie.id}
+                            id={movie.id}
                             title={movie.title || movie.name}
                             rating={movie.vote_average?.toFixed(1) || "N/A"}
                             year={(movie.release_date || movie.first_air_date)?.split("-")[0] || "N/A"}
