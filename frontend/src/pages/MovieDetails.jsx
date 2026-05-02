@@ -75,7 +75,7 @@ const MovieDetails = () => {
                         style={{ backgroundImage: `url(https://image.tmdb.org/t/p/original${movie.backdrop_path})` }}
                     />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-dark to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-dark to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-8 max-w-7xl mx-auto">
                     <h1 className="text-4xl md:text-6xl font-black mb-4">{movie.title || movie.name}</h1>
                     <div className="flex flex-wrap gap-4 items-center text-sm md:text-base text-gray-300">
