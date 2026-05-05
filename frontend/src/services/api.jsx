@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { Axios } from 'axios';
 
 // Using your TMDb key from the original script
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -48,4 +48,18 @@ export const getTrending = async () => {
         console.error("Error fetching movie credits:", error);
         return {cast:[], crew:[]};
       }
-  }
+  };
+
+//   Add: function to fetch popular movies
+
+  export const getPopularMovies = async () => {
+    try{
+        const response = await axios.get(`${BASE_URL}/movie/popular?api_key=${API_KEY}`);
+        return response.data.results; // TMDb returns the array in a .results property          
+    }
+    catch(err){
+        console.error("Error fetching popular movies:", err);
+        return [];
+    }
+
+  };
