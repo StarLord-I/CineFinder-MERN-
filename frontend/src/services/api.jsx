@@ -18,10 +18,10 @@ export const getTrending = async () => {
 
   export const searchMovies = async (query) => {
     try {
-        const response = await axios.get(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${query}`);
+        const response = await axios.get(`${BASE_URL}/search/multi?api_key=${API_KEY}&query=${query}`);
         return response.data.results; // TMDb returns the array in a .results property
     } catch (error) {
-        console.error("Error searching movies:", error);
+        console.error("Error searching movies and TV shows:", error);
         return [];
     }
 };
@@ -63,3 +63,41 @@ export const getTrending = async () => {
     }
 
   };
+
+//   MODIFIED: Function to fetch popular TV series
+
+export const getPopularTV = async () => {
+     try{
+        const response = await axios.get(`${BASE_URL}/tv/popular?api_key=${API_KEY}`);
+        return response.data.results; // TMDb returns the array in a .results property          
+    }
+     catch(err){
+        console.error("Error fetching popular TV series:", err);
+        return [];
+     }
+     
+};
+
+export const getTVCredits = async (id) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/tv/${id}/credits?api_key=${API_KEY}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching TV credits:", error);
+        return { cast: [], crew: [] };
+    }
+};
+
+export const getTVDetails = async (id) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/tv/${id}?api_key=${API_KEY}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching TV details:", error);
+        return null;
+    }
+};
+
+
+// // NOTE: Our existing searchMovies function already uses the /search/multi endpoint, 
+// which is perfect for our new multi-logic. So we don't need to change it. It will return both movies and TV shows based on the query, and we can handle the results in our components as needed.

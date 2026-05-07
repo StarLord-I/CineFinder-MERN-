@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { searchMovies } from "../services/api";
 import MovieCard from "../components/MovieCard";
+import MovieCardSkeleton from "../components/MovieCardSkeleton"; // HIGHLIGHT: Re-added for consistency
 
 const SearchResults = () => {
     const [searchParams] = useSearchParams();
-    const query = searchParams.get("q");
+    // FIXED: Changed "q" to "query" to match most common search bar implementations
+    const query = searchParams.get("query") || searchParams.get("q"); 
 
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -13,9 +15,8 @@ const SearchResults = () => {
 
     useEffect(() => {
         const fetchResults = async () => {
-            if (!query || query.trim() === "") {
+           if (!query || query.trim() === "" || query === "null") {
                 setMovies([]);
-                setLoading(false); // Fix: Turn off loading so the empty state displays correctly
                 return;
             }
 
@@ -32,7 +33,7 @@ const SearchResults = () => {
                 setMovies(results);
             } catch (err) {
                 console.error("search error", err);
-                setError("Something went wrong while searching for movies. Please try again later.");
+                setError("Something went wrong while searching. Please try again later.");
             } finally {
                 setLoading(false);
             }
@@ -46,49 +47,51 @@ const SearchResults = () => {
                 Search Results for: <span className="text-brand italic">"{query || '...'}"</span>
             </h2>
 
-            {/* loading indicator */}
-            {loading && (
-                <div className="flex justify-center py-20">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-brand"></div>
-                </div>
-            )}
+            {/* ERROR HANDLING */}
+            {error && <div className="text-center py-20 text-red-400 text-xl">{error}</div>}
 
-            {/* error message */}
-            {error && (
-                <div className="text-center py-20 text-red-400 text-xl">
-                    {error}
-                </div>
-            )}
-
-            {!loading && !error && (!query || query?.trim() === "") && (
-                <div className="text-center py-20 text-gray-400 text-xl">
-                    Please enter something to search.
-                </div>
-            )}
-
-            {!loading && !error && query && movies.length === 0 && (
-                <div className="text-center py-20 text-gray-400 text-xl">
-                    No movies found for "{query}". Try something else!
-                </div>
-            )}
-
-            {!loading && !error && movies.length > 0 && (
+            {/* LOADING STATE: Using Skeletons instead of a simple spinner */}
+            {loading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                    {movies.map((movie) => (
-                        <MovieCard 
-                            key={movie.id}
-                            id={movie.id}
-                            title={movie.title || movie.name}
-                            rating={movie.vote_average?.toFixed(1) || "N/A"}
-                            year={(movie.release_date || movie.first_air_date)?.split("-")[0] || "N/A"}
-                            poster={
-                                movie.poster_path
-                                ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                                : null
-                            }
-                        />
+                    {Array(8).fill(0).map((_, index) => (
+                        <MovieCardSkeleton key={index} />
                     ))}
                 </div>
+            ) : (
+                <>
+                    {/* EMPTY STATES */}
+                    {!error && query && movies.length === 0 && (
+                        <div className="text-center py-20 text-gray-400 text-xl">
+                            No results found for "{query}". Try something else!
+                        </div>
+                    )}
+
+                    {/* SUCCESS STATE */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                        {movies.map((movie) => {
+                            // FIXED: Logic inside map must be wrapped in { } with a return
+                            // FIXED: Use 'movie' (the parameter name) instead of 'item'
+                            const isTV = movie.media_type === "tv" || (!movie.title && movie.name);
+                            const type = isTV ? "tv" : "movie";
+
+                            return (
+                                <MovieCard 
+                                    key={movie.id}
+                                    id={movie.id}
+                                    mediaType={type} // HIGHLIGHT: Passing the type for correct dynamic routing
+                                    title={movie.title || movie.name}
+                                    rating={movie.vote_average?.toFixed(1) || "N/A"}
+                                    year={(movie.release_date || movie.first_air_date)?.split("-")[0] || "N/A"}
+                                    poster={
+                                        movie.poster_path
+                                        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                                        : null
+                                    }
+                                />
+                            );
+                        })}
+                    </div>
+                </>
             )}
         </main>
     );

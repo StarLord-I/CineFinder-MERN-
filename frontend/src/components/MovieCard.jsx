@@ -1,9 +1,15 @@
 import { Link } from 'react-router-dom';
 
-const MovieCard = ({ id, title, rating, year, poster }) => {
+const MovieCard = ({ id, title, rating, year, poster , mediaType }) => {
+
+    const path = mediaType === "tv"
+        ? `/tv/${id}`
+        : `/movie/${id}`;
+        
   return (
+       
     <Link 
-      to={`/movie/${id}`} 
+      to={path} 
       className="group bg-gray-900 rounded-xl overflow-hidden block hover:scale-105 transition-transform duration-300 shadow-lg border border-gray-800 max-w-xs"
     >
       <div className="relative">

@@ -38,7 +38,7 @@ const Home = () => {
   
     return (
         <main className="max-w-7xl mx-auto px-4 py-12">
-      <h2 className="text-2xl font-bold text-white mb-8 border-l-4 border-brand pl-4">
+      <h2 className="text-2xl font-bold text-brand mb-8 border-l-4 border-brand pl-4">
         Trending This Week
       </h2>
 

@@ -39,10 +39,14 @@ const Navbar = () => {
         return () => document.removeEventListener("mousedown", closeSearch);
     }, []);
 
-    const handleSelect = (movie) => {
+   const handleSelect = (movie) => {
         setShowDropdown(false);
-        setQuery(""); // Clear input after selection
-        navigate(`/search?q=${movie.title || movie.name}`); 
+        setQuery(""); 
+        
+        // FIXED: Changed 'q' to 'query' to match SearchResults logic
+        // encodeURIComponent ensures special characters like "&" don't break the URL
+        const searchTerm = movie.title || movie.name;
+        navigate(`/search?query=${encodeURIComponent(searchTerm)}`); 
     };
 
     return (

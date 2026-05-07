@@ -37,7 +37,7 @@ const Movies = () => {
     
     return (
         <main className="max-w-7xl mx-auto px-4 py-12">
-            <h2>Popular Movies</h2>
+            <h2 className="text-2xl font-black mb-8 text-brand border-l-4 border-brand pl-4">Popular Movies</h2>
 
             {/* error handling  */}
             {error && (<div className="text-center py-20 text-xl text-red-500">
