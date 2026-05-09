@@ -1,19 +1,27 @@
 import { useState, useEffect } from "react";
+
 import { useParams, Link, useLocation } from "react-router-dom"; // HIGHLIGHT: Added useLocation
+
 import { 
     getMovieDetails, getMovieCredits, 
     getTVDetails, getTVCredits // HIGHLIGHT: Ensure these are exported in api.js
-} from "../services/api";
+} from "../services/api";  
+
+import { useWatchlist } from "../context/WatchlistContext";
 
 const MovieDetails = () => {
     const { id } = useParams();
     const location = useLocation(); // HIGHLIGHT: Get current path
-    
     // FIXED: Check if the current route is for a TV show
     const isTV = location.pathname.includes("/tv/");
 
+    const { addToWatchlist, removeFromWatchlist, isQueued } = useWatchlist();
+
     const [movie, setMovie] = useState(null);
+
     const [cast, setCast] = useState([]);
+    const inWatchlist = movie ? isQueued(movie.id) : false;
+
     const [director, setDirector] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -72,8 +80,8 @@ const MovieDetails = () => {
     }
 
     const POSTER_URL = movie.poster_path 
-        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` 
-        : 'https://via.placeholder.com/500x750?text=No+Image';
+    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` 
+    : 'https://placehold.co/500x750?text=No+Poster';
 
     return (
         <div className="min-h-screen bg-dark text-white pb-20">
@@ -97,6 +105,18 @@ const MovieDetails = () => {
                         <span>{isTV ? `${movie.number_of_seasons} Seasons` : `${movie.runtime} min`}</span>
                         <span>{movie.genres?.map((g) => g.name).join(', ') || 'N/A'}</span>
                     </div>
+
+                    {/* EXACT PLACEMENT: Add button directly under the meta-info row */}
+                    <button 
+                        onClick={() => inWatchlist ? removeFromWatchlist(movie.id) : addToWatchlist(movie)}
+                        className={`mt-6 px-8 py-3 rounded-xl font-bold transition-all duration-300 shadow-lg flex items-center gap-2 ${
+                            inWatchlist 
+                            ? "bg-red-500/20 text-red-500 border border-red-500/50 hover:bg-red-500 hover:text-white" 
+                            : "bg-brand text-dark hover:bg-yellow-500 hover:scale-105"
+                        }`}
+                       >
+                        {inWatchlist ? "✓ In Watchlist" : "+ Add to Watchlist"}
+                    </button>
                 </div>
             </div>
 
@@ -133,8 +153,8 @@ const MovieDetails = () => {
                             {cast.length === 0 ? (
                                 <p className="text-gray-400">No cast information available.</p>
                             ) : (
-                                cast.map((actor) => (
-                                    <div key={actor.id} className="bg-gray-900 rounded-lg p-3 w-32 shrink-0 text-center">
+                                cast.map((actor, index) => (
+                                    <div key={`${actor.id}-${index}`} className="bg-gray-900 rounded-lg p-3 w-32 shrink-0 text-center">
                                         <img
                                             src={actor.profile_path ? `https://image.tmdb.org/t/p/w185${actor.profile_path}` : "https://via.placeholder.com/150"}
                                             alt={actor.name}
