@@ -1,113 +1,130 @@
-# 🎬 CineFinder
+CineFinder
 
-CineFinder is a modern movie discovery web application that allows users to explore trending movies, search for their favorite films, and view detailed information in a clean and responsive interface.
+A modern movie & TV discovery web app built with React, Vite, and Tailwind CSS using the TMDb API. Users can browse trending content, search for movies and TV shows, view detailed information, and save favorites to a persistent watchlist.
 
----
+⸻
 
-## 🚀 Features
+Features
 
-- 🔍 Search for movies in real-time  
-- 🎞️ Browse trending and popular movies  
-- 📄 View detailed movie information  
-- 💻 Fully responsive (mobile-first design)  
-- ⚡ Fast and smooth UI with modern design  
+* Trending Movies & TV Shows
+* Search Functionality
+* Movie & TV Detail Pages
+* Watchlist with localStorage Persistence
+* Responsive UI
+* Dynamic Routing with React Router
+* Cast & Crew Information
+* Loading & Error States
+* Modern Tailwind CSS Design
 
----
+⸻
 
-## 🛠️ Tech Stack
+Tech Stack
 
-### Frontend
-- React.js  
-- Tailwind CSS  
-- JavaScript (ES6+)  
+* React
+* Vite
+* Tailwind CSS
+* React Router DOM
+* Axios
+* TMDb API
+* Context API
+* localStorage
 
-### Tools & APIs
-- TMDB API (The Movie Database)  
-- Git & GitHub  
+⸻
 
----
+Screenshots
 
-## 📂 Project Structure
+Add your screenshots here later.
 
-cinefinder-mern/
-│
-├── frontend/        # React frontend
-│   ├── src/
-│   ├── public/
-│   └── ...
-│
-└── README.md
+/public/screenshots/home.png
+/public/screenshots/details.png
 
----
+⸻
 
-## ⚙️ Installation & Setup
+Installation
 
-### 1. Clone the repository
-git clone https://github.com/your-username/cinefinder-mern.git
+Clone the repository:
 
-### 2. Navigate to project
+git clone YOUR_REPOSITORY_URL
+
+Go to the project folder:
+
 cd cinefinder-mern/frontend
 
-### 3. Install dependencies
+Install dependencies:
+
 npm install
 
-### 4. Start development server
+⸻
+
+Environment Variables
+
+Create a .env file in the root directory:
+
+VITE_TMDB_API_KEY=your_tmdb_api_key
+
+Get your API key from:
+
+TMDb API￼
+
+⸻
+
+Run Locally
+
+Start development server:
+
 npm run dev
 
----
+Build for production:
 
-## 🔑 Environment Variables
+npm run build
 
-Create a .env file inside frontend/ and add:
+Preview production build:
 
-VITE_API_KEY=your_tmdb_api_key_here
+npm run preview
 
-> ⚠️ Never share your API key publicly.
+⸻
 
----
+Folder Structure
 
-## 📸 Screenshots
+src/
+│
+├── components/
+├── context/
+├── pages/
+├── services/
+├── assets/
+├── App.jsx
+└── main.jsx
 
-(Add your project screenshots here)
+⸻
 
----
+Deployment
 
-## 🌐 Live Demo
+This project is deployed on:
 
-(Add your deployed link here — Vercel/Netlify)
+Vercel￼
 
----
+⸻
 
-## 📌 Future Improvements
+Future Improvements
 
-- ❤️ Add watchlist / favorites feature  
-- 🔐 User authentication  
-- 🎥 Trailer integration  
-- 📊 Movie recommendations  
-- 🧠 Backend integration (Node.js + MongoDB)  
+* User Authentication
+* Backend Integration (MongoDB)
+* Personalized Recommendations
+* Trailer Support
+* Infinite Scrolling
+* Framer Motion Animations
+* Dark/Light Theme
+* Reviews & Ratings
 
----
+⸻
 
-## 🤝 Contributing
+Author
 
-Contributions are welcome!  
-Feel free to fork this repo and submit a pull request.
+Built by ziya khan pathan
 
----
+⸻
 
-## 📄 License
+License
 
-This project is open-source and available under the MIT License.
-
----
-
-## 👨‍💻 Author
-
-Ziya Khan Pathan  
-- GitHub: https://github.com/your-username  
-
----
-
-## ⭐ Support
-
-If you like this project, give it a ⭐ on G
+This project is licensed under the MIT License.
