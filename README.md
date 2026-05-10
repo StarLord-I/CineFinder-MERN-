@@ -3,6 +3,9 @@
 CineFinder is a modern movie and TV show discovery web app built using React, Vite, Tailwind CSS, and the TMDb API. Users can explore trending content, search for movies and TV shows, view detailed information, and manage a personal watchlist.
 
 ---
+## 🌐 Live Demo
+
+🔗 https://cine-finder-mern.vercel.app/
 
 ## 🚀 Features
 
