@@ -1,24 +1,22 @@
 import { useState, useEffect } from "react";
-
-import { useParams, Link, useLocation } from "react-router-dom"; // HIGHLIGHT: Added useLocation
+import { useParams, Link, useLocation } from "react-router-dom"; 
 
 import { 
     getMovieDetails, getMovieCredits, 
-    getTVDetails, getTVCredits // HIGHLIGHT: Ensure these are exported in api.js
+    getTVDetails, getTVCredits 
 } from "../services/api";  
 
 import { useWatchlist } from "../context/WatchlistContext";
+import MovieReviews from "../components/MovieReviews";
 
 const MovieDetails = () => {
     const { id } = useParams();
-    const location = useLocation(); // HIGHLIGHT: Get current path
-    // FIXED: Check if the current route is for a TV show
+    const location = useLocation(); 
     const isTV = location.pathname.includes("/tv/");
 
     const { addToWatchlist, removeFromWatchlist, isQueued } = useWatchlist();
 
     const [movie, setMovie] = useState(null);
-
     const [cast, setCast] = useState([]);
     const inWatchlist = movie ? isQueued(movie.id) : false;
 
@@ -26,13 +24,15 @@ const MovieDetails = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // Dynamic state to check if user has an active session token saved locally
+    const isLoggedIn = !!localStorage.getItem('token');
+
     useEffect(() => {
         const fetchDetails = async () => {
             try {
                 setLoading(true);
                 setError(null);
 
-                // FIXED: Use ternary to call correct API based on isTV
                 const [details, creditsData] = await Promise.all([
                     isTV ? getTVDetails(id) : getMovieDetails(id),
                     isTV ? getTVCredits(id) : getMovieCredits(id)
@@ -44,10 +44,9 @@ const MovieDetails = () => {
                 
                 setMovie(details);
 
-                // FIXED: TV shows often use "Created By" or "Executive Producer" instead of Director
                 const directorObj = creditsData?.crew?.find(
                     (member) => member.job === (isTV ? "Executive Producer" : "Director")
-                ) || details.created_by?.[0]; // Fallback for TV creators
+                ) || details.created_by?.[0]; 
 
                 setDirector(directorObj ? directorObj.name : "N/A");
                 setCast(creditsData?.cast?.slice(0, 7) || []); 
@@ -59,7 +58,7 @@ const MovieDetails = () => {
             }
         };
         fetchDetails();
-    }, [id, isTV]); // HIGHLIGHT: Added isTV to dependency array
+    }, [id, isTV]); 
  
     if (loading) {
         return (
@@ -95,28 +94,34 @@ const MovieDetails = () => {
                 )}
                 <div className="absolute inset-0 bg-linear-to-t from-dark to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-8 max-w-7xl mx-auto">
-                    {/* FIXED: Handled title (Movie) vs name (TV) */}
                     <h1 className="text-4xl md:text-6xl font-black mb-4">{movie.title || movie.name}</h1>
                     <div className="flex flex-wrap gap-4 items-center text-sm md:text-base text-gray-300">
                         <span className="bg-brand text-black px-2 py-1 rounded font-bold">★ {movie.vote_average?.toFixed(1) || '0.0'} / 10</span>
-                        {/* FIXED: Handled release_date (Movie) vs first_air_date (TV) */}
                         <span>{(movie.release_date || movie.first_air_date)?.split("-")[0]}</span>
-                        {/* FIXED: Handled runtime vs number_of_episodes */}
                         <span>{isTV ? `${movie.number_of_seasons} Seasons` : `${movie.runtime} min`}</span>
                         <span>{movie.genres?.map((g) => g.name).join(', ') || 'N/A'}</span>
                     </div>
 
-                    {/* EXACT PLACEMENT: Add button directly under the meta-info row */}
-                    <button 
-                        onClick={() => inWatchlist ? removeFromWatchlist(movie.id) : addToWatchlist(movie)}
-                        className={`mt-6 px-8 py-3 rounded-xl font-bold transition-all duration-300 shadow-lg flex items-center gap-2 ${
-                            inWatchlist 
-                            ? "bg-red-500/20 text-red-500 border border-red-500/50 hover:bg-red-500 hover:text-white" 
-                            : "bg-brand text-dark hover:bg-yellow-500 hover:scale-105"
-                        }`}
-                       >
-                        {inWatchlist ? "✓ In Watchlist" : "+ Add to Watchlist"}
-                    </button>
+                    {/* MODIFIED: Watchlist button now features an internal authorization guard wrapper */}
+                    {isLoggedIn ? (
+                        <button 
+                            onClick={() => inWatchlist ? removeFromWatchlist(movie.id) : addToWatchlist(movie)}
+                            className={`mt-6 px-8 py-3 rounded-xl font-bold transition-all duration-300 shadow-lg flex items-center gap-2 ${
+                                inWatchlist 
+                                ? "bg-red-500/20 text-red-500 border border-red-500/50 hover:bg-red-500 hover:text-white" 
+                                : "bg-brand text-dark hover:bg-yellow-500 hover:scale-105"
+                            }`}
+                        >
+                            {inWatchlist ? "✓ In Watchlist" : "+ Add to Watchlist"}
+                        </button>
+                    ) : (
+                        <div className="mt-6 p-4 bg-gray-900/80 border border-dashed border-gray-700 rounded-xl max-w-sm backdrop-blur-xs">
+                            <p className="text-xs text-gray-400 mb-2">Want to curate your personal movie library?</p>
+                            <Link to="/auth" className="text-brand hover:underline font-bold text-xs flex items-center gap-1">
+                                🔒 Sign up or Login to unlock your watchlist &rarr;
+                            </Link>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -137,7 +142,6 @@ const MovieDetails = () => {
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8 border-t border-b border-gray-800 py-6">
                         <div>
-                            {/* FIXED: Label change for TV */}
                             <span className="block text-gray-500 text-xs font-bold tracking-wider uppercase mb-1">{isTV ? "Creator" : "Director"}</span>
                             <span className="text-white text-lg font-semibold">{director}</span>
                         </div>
@@ -168,6 +172,11 @@ const MovieDetails = () => {
                         </div>
                     </div>      
                 </div>
+            </div>
+           
+            {/* Audience evaluation feed wrapper boundary */}
+            <div className="max-w-7xl mx-auto px-4 mt-8">
+                <MovieReviews movieId={id} />
             </div>
         </div>
     );

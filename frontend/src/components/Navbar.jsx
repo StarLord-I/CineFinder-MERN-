@@ -63,6 +63,7 @@ const Navbar = () => {
                     <li><Link to="/movies" className="hover:text-brand transition">Movies</Link></li>
                     <li><Link to="/tv-series" className="hover:text-brand transition">TV Series</Link></li>
                     <li><Link to="/watchlist" className="hover:text-brand transition">Watchlist</Link></li>
+                    <li><Link to="/auth" className="hover:text-brand transition">Login</Link></li>
                 </ul>
 
                 {/* Search Bar - Note the ref={searchRef} here */}
