@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; // Added Link for Forgot Password path
 
 function Auth() {
     const [isLogin, setIsLogin] = useState(true);
@@ -21,15 +21,19 @@ function Auth() {
 
             if (!response.ok) throw new Error(data.message || 'Authentication failed');
 
-            if (isLogin) {
-                // Save session details securely in the browser
+            // ✅ STRATEGIC UPDATE: Both Login and Signup now receive tokens from the backend!
+            if (data.token && data.user) {
+                // 1. Save secure session authorization string
                 localStorage.setItem('token', data.token);
-                localStorage.setItem('username', data.user.username);
                 
-                // Redirect user back to home page after successful login
-                navigate('/');
-                window.location.reload(); // Refresh to update navbar state instantly
+                // 2. FIXED: Save complete user data object as a string so Profile.jsx can parse it cleanly
+                localStorage.setItem('user', JSON.stringify(data.user));
+                
+                // 3. Redirect and force layout state evaluation
+                navigate('/profile'); // Send them directly to their brand new profile page!
+                window.location.reload(); 
             } else {
+                // Fallback state control layout
                 setMessage("Account created successfully! Switching to sign in...");
                 setIsLogin(true);
             }
@@ -81,7 +85,16 @@ function Auth() {
                         />
                     </div>
 
-                    <button type="submit" className="bg-brand text-dark p-3 rounded-xl font-bold hover:bg-yellow-500 transition duration-200 mt-4 shadow-lg">
+                    {/* 🔑 FEATURE ADDITION: Dynamic Forgot Password anchor entry link */}
+                    {isLogin && (
+                        <div className="text-right">
+                            <Link to="/forgot-password" className="text-xs text-gray-500 hover:text-brand transition duration-200">
+                                Forgot Password?
+                            </Link>
+                        </div>
+                    )}
+
+                    <button type="submit" className="bg-brand text-dark p-3 rounded-xl font-bold hover:bg-yellow-500 transition duration-200 mt-2 shadow-lg">
                         {isLogin ? 'Sign In Master' : 'Create Account'}
                     </button>
                 </form>

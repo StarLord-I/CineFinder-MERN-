@@ -1,3 +1,4 @@
+// src/pages/Watchlist.jsx
 import { useWatchlist } from "../context/WatchlistContext";
 import MovieCard from "../components/MovieCard";
 
@@ -20,7 +21,6 @@ const Watchlist = () => {
                         <MovieCard 
                             key={item.id}
                             id={item.id}
-                             // FIXED: Explicitly map the TMDb data to your MovieCard props
                             title={item.title || item.name}
                             rating={item.vote_average?.toFixed(1) || "N/A"}
                             year={(item.release_date || item.first_air_date)?.split("-")[0] || "N/A"}
@@ -33,5 +33,6 @@ const Watchlist = () => {
         </main>
     );
 };
+
 
 export default Watchlist;

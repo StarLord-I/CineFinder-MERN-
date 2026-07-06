@@ -6,6 +6,7 @@ import MovieDetails from "./pages/MovieDetails";
 import Movies from "./pages/Movies";
 import TVseries from "./pages/TVseries";
 import Watchlist from "./pages/Watchlist";
+import Profile from "./pages/Profile";
 // 1. IMPORT YOUR NEW AUTHENTICATION PAGE
 import Auth from "./pages/Auth";
 
@@ -22,6 +23,7 @@ function App() {
             <Route path="/movies" element={<Movies />} />
             <Route path="/tv/:id" element={<MovieDetails />} /> 
             <Route path="/watchlist" element={<Watchlist />} />
+            <Route path="/profile" element={<Profile />} />
             
             {/* 2. REGISTER THE SECURE AUTHENTICATION PATHWAY LINK */}
             <Route path="/auth" element={<Auth />} /> 

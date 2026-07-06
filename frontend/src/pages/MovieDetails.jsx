@@ -102,7 +102,7 @@ const MovieDetails = () => {
                         <span>{movie.genres?.map((g) => g.name).join(', ') || 'N/A'}</span>
                     </div>
 
-                    {/* MODIFIED: Watchlist button now features an internal authorization guard wrapper */}
+                    {/* Watchlist button features an internal authorization guard wrapper */}
                     {isLoggedIn ? (
                         <button 
                             onClick={() => inWatchlist ? removeFromWatchlist(movie.id) : addToWatchlist(movie)}
@@ -171,6 +171,78 @@ const MovieDetails = () => {
                             )}
                         </div>
                     </div>      
+
+                   
+                    {movie?.videos?.results && (
+                        <div className="mt-4">
+                            <h2 className="text-2xl font-bold text-brand mb-4 border-l-4 border-brand pl-3">Official Trailer</h2>
+                            {(() => {
+                                const trailer = movie.videos.results.find(
+                                    (vid) => vid.type === "Trailer" && vid.site === "YouTube"
+                                );
+                                
+                                if (trailer) {
+                                    return (
+                                        <div className="w-full rounded-2xl overflow-hidden shadow-2xl bg-black border border-gray-800">
+                                            <iframe
+                                                src={`https://www.youtube.com/embed/${trailer.key}`}
+                                                title="Official Trailer"
+                                                className="w-full h-[240px] sm:h-[360px] md:h-[400px]"
+                                                allowFullScreen
+                                            ></iframe>
+                                        </div>
+                                    );
+                                }
+                                return <p className="text-gray-400 italic">No official video trailer available at this time.</p>;
+                            })()}
+                        </div>
+                    )}
+
+                    
+                    <div className="mt-4 bg-gray-900/40 p-6 rounded-2xl border border-gray-800">
+                        <h2 className="text-xl font-bold text-white mb-3">Where to Watch</h2>
+                        {(() => {
+                            const providers = movie?.["watch/providers"]?.results?.IN;
+                            const releaseStatus = movie?.status;
+
+                            if (releaseStatus && releaseStatus !== "Released" && releaseStatus !== "Returning Series" && releaseStatus !== "Ended") {
+                                return (
+                                    <div className="text-amber-500 font-semibold flex items-center gap-2 text-sm">
+                                        ⏳ Status: Not Yet Released (In Production / Planned)
+                                    </div>
+                                );
+                            }
+
+                            if (providers && (providers.flatrate || providers.rent || providers.buy)) {
+                                const streamingPlatforms = providers.flatrate || providers.rent || [];
+                                return (
+                                    <div>
+                                        <p className="text-green-400 font-medium text-sm mb-3">🟢 Available now on Streaming/OTT Platforms:</p>
+                                        <div className="flex flex-wrap gap-3 items-center">
+                                            {streamingPlatforms.map((platform) => (
+                                                <div key={platform.provider_id} className="flex items-center gap-2 bg-gray-900 border border-gray-800 px-3 py-1.5 rounded-xl text-xs text-gray-200 shadow-sm">
+                                                    <img 
+                                                        src={`https://image.tmdb.org/t/p/w92${platform.logo_path}`} 
+                                                        alt={platform.provider_name} 
+                                                        className="w-5 h-5 rounded-md"
+                                                    />
+                                                    <span>{platform.provider_name}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            }
+
+                            return (
+                                <div className="text-brand font-semibold flex items-center gap-2 text-sm">
+                                    🎬 Currently Playing Exclusively in Theatres / Cinemas
+                                </div>
+                            );
+                        })()}
+                    </div>
+                    {/* ======================================================================= */}
+
                 </div>
             </div>
            

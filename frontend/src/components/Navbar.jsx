@@ -1,22 +1,24 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { searchMovies } from '../services/api';
-import { Search, Menu } from 'lucide-react';
+import { Search, Menu, User, LogOut } from 'lucide-react'; // Added icons for sleek look
 
 const Navbar = () => {
     const [query, setQuery] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const navigate = useNavigate();
-    const searchRef = useRef(null); // Matches the 'ref' in your JSX below
+    const searchRef = useRef(null);
+
+    // Dynamic state check: Does the user have a session token stored?
+    const isLoggedIn = !!localStorage.getItem('token');
 
     // EFFECT 1: Handle Live Search Suggestions (Debounced)
     useEffect(() => {
         const timeoutId = setTimeout(async () => {
-            // Logic Fix: Use > 2 so it works as you keep typing
             if (query.trim().length > 2) { 
                 const results = await searchMovies(query);
-                setSuggestions(results.slice(0, 5)); 
+                setSuggestions(results?.slice(0, 5) || []); 
                 setShowDropdown(true);
             } else {
                 setSuggestions([]);
@@ -30,7 +32,6 @@ const Navbar = () => {
     // EFFECT 2: Close dropdown when clicking outside
     useEffect(() => {
         const closeSearch = (e) => {
-            // check if we clicked outside the search container
             if (searchRef.current && !searchRef.current.contains(e.target)) {
                 setShowDropdown(false);
             }
@@ -39,14 +40,19 @@ const Navbar = () => {
         return () => document.removeEventListener("mousedown", closeSearch);
     }, []);
 
-   const handleSelect = (movie) => {
+    const handleSelect = (movie) => {
         setShowDropdown(false);
         setQuery(""); 
-        
-        // FIXED: Changed 'q' to 'query' to match SearchResults logic
-        // encodeURIComponent ensures special characters like "&" don't break the URL
         const searchTerm = movie.title || movie.name;
         navigate(`/search?query=${encodeURIComponent(searchTerm)}`); 
+    };
+
+    // Logout controller logic
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        navigate('/');
+        window.location.reload(); // Force full structural state reset
     };
 
     return (
@@ -58,15 +64,41 @@ const Navbar = () => {
                     </Link>
                 </div>
 
-                <ul className="hidden md:flex gap-8 text-gray-300 font-medium">
+                {/* Main Link Group with Authenticated Route Control Gateway */}
+                <ul className="hidden md:flex items-center gap-8 text-gray-300 font-medium">
                     <li><Link to="/" className="hover:text-brand transition">Home</Link></li>
                     <li><Link to="/movies" className="hover:text-brand transition">Movies</Link></li>
                     <li><Link to="/tv-series" className="hover:text-brand transition">TV Series</Link></li>
                     <li><Link to="/watchlist" className="hover:text-brand transition">Watchlist</Link></li>
-                    <li><Link to="/auth" className="hover:text-brand transition">Login</Link></li>
+                    
+                   
+                    {isLoggedIn ? (
+                        <>
+                            <li>
+                                <Link to="/profile" className="text-brand flex items-center gap-1 hover:underline transition">
+                                    <User size={16} /> Profile
+                                </Link>
+                            </li>
+                            <li>
+                                <button 
+                                    onClick={handleLogout} 
+                                    className="text-red-400 hover:text-red-500 flex items-center gap-1 bg-red-500/10 px-3 py-1 rounded-full text-sm font-semibold transition"
+                                >
+                                    <LogOut size={14} /> Logout
+                                </button>
+                            </li>
+                        </>
+                    ) : (
+                        <li>
+                            <Link to="/auth" className="bg-brand text-black font-bold px-4 py-1.5 rounded-full hover:bg-yellow-500 transition shadow-md">
+                                Login
+                            </Link>
+                        </li>
+                    )}
+                   
                 </ul>
 
-                {/* Search Bar - Note the ref={searchRef} here */}
+                {/* Search Bar Container */}
                 <div className="relative hidden sm:block" ref={searchRef}>
                     <div className='relative'>
                         <input 
@@ -89,7 +121,7 @@ const Navbar = () => {
                                     className="px-4 py-3 hover:bg-gray-800 cursor-pointer flex items-center gap-3 transition border-b border-gray-800 last:border-none"
                                 >
                                     <img 
-                                        src={item.poster_path ? `https://image.tmdb.org/t/p/w92${item.poster_path}` : 'https://via.placeholder.com/92x138'} 
+                                        src={item.poster_path ? `https://image.tmdb.org/t/p/w92${item.poster_path}` : 'https://placehold.co/92x138?text=No+Img'} 
                                         className="w-8 h-12 object-cover rounded"
                                         alt=""
                                     />
