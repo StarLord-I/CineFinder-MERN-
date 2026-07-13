@@ -17,7 +17,7 @@ export const WatchlistProvider = ({ children }) => {
         }
 
         try {
-            const res = await axios.get("http://localhost:5001/api/movies", {
+            const res = await axios.get("http://localhost:5001/api/watchlist", {
                 headers: {
                     Authorization: `Bearer ${token}` 
                 }
@@ -49,7 +49,7 @@ export const WatchlistProvider = ({ children }) => {
                 release_date: item.release_date || item.first_air_date
             };
 
-            const res = await axios.post("http://localhost:5001/api/movies", payload, {
+            const res = await axios.post("http://localhost:5001/api/watchlist", payload, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 

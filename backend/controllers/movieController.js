@@ -4,24 +4,38 @@ const TMDB_BASE = "https://api.tmdb.org/3";
 
 const getWatchlist = async (req, res) => {
     try {
-        const movies = await Movie.find(); 
-        res.json(movies);
+        const movies = await Movie.find({ userId: req.user.id }); 
+        
+        res.status(200).json(movies);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ error: err.message });
     }
 };
 
 const addToWatchlist = async (req, res) => {
     try {
-        const { title, rating } = req.body;
-        const newMovie = new Movie({ title, rating });
+        const { id, title, rating, poster_path, release_date } = req.body;
+
+        const duplicateCheck = await Movie.findOne({ userId: req.user.id, id });
+        if (duplicateCheck) {
+            return res.status(400).json({ message: "This title already exists in your library layout." });
+        }
+
+        const newMovie = new Movie({
+            userId: req.user.id, 
+            id,
+            title,
+            rating,
+            poster_path,
+            release_date
+        });
+
         const savedMovie = await newMovie.save();
         res.status(201).json(savedMovie);
     } catch (err) {
-        res.status(400).json({ message: "Failed to add movie, Master!", error: err.message });
+        res.status(500).json({ error: err.message });
     }
 };
-
 const getTrending = async (req, res) => {
     try {
         const response = await axios.get(`${TMDB_BASE}/trending/movie/week?api_key=${process.env.TMDB_API_KEY}`, { timeout: 5000 });
