@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BACKEND_BASE_URL = "http://localhost:5001/api";
+const BACKEND_BASE_URL = import.meta.env.VITE_API_URL;
 
 export const getTrending = async () => {
     try {
